@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NeuralForge — Model Optimizer</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="static/styles.css">
+</head>
+<body>
+
+<div class="grid-bg"></div>
+<div class="orb orb1"></div>
+<div class="orb orb2"></div>
+<div class="orb orb3"></div>
+
+<div class="wrapper">
+
+  <!-- HEADER -->
+  <header>
+    <div class="logo-mark">
+      <div class="logo-icon">
+        <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+          <path d="M9 2L16 6V12L9 16L2 12V6L9 2Z" stroke="#3d8bff" stroke-width="1.5" fill="none"/>
+          <circle cx="9" cy="9" r="2.5" fill="#3d8bff" opacity="0.8"/>
+        </svg>
+      </div>
+      <span class="logo-text">Neural<span>Forge</span></span>
+    </div>
+
+    <h1>
+      <span class="line1">Model Compression</span>
+      <span class="line2">Made Effortless</span>
+    </h1>
+    <p class="subtitle">Prune & quantize any Hugging Face model.<br>Reduce size. Accelerate inference. No code required.</p>
+  </header>
+
+  <!-- STATS -->
+  <div class="stats-bar">
+    <div class="stat"><div class="stat-val">90%</div><div class="stat-label">Max Size Reduction</div></div>
+    <div class="stat"><div class="stat-val">4×</div><div class="stat-label">Faster Inference</div></div>
+    <div class="stat"><div class="stat-val">50K+</div><div class="stat-label">Models Supported</div></div>
+  </div>
+
+  <!-- STEP 1: MODEL URL -->
+  <div class="card">
+    <div class="section-header">
+      <div class="section-num">1</div>
+      <div>
+        <div class="section-title">Select Model</div>
+        <div class="section-subtitle">Paste your Hugging Face model URL or identifier</div>
+      </div>
+    </div>
+
+    <div class="input-group">
+      <input type="text" class="url-input" id="modelUrl"
+        placeholder="e.g. https://huggingface.co/meta-llama/Llama-2-7b or bert-base-uncased"
+        autocomplete="off" spellcheck="false" />
+      <button class="validate-btn" onclick="validateModel()">LOAD →</button>
+    </div>
+
+    <div class="model-info" id="modelInfo">
+      <div class="model-dot"></div>
+      <span id="modelInfoText">Model loaded successfully</span>
+    </div>
+  </div>
+
+  <!-- STEP 2: TECHNIQUE -->
+  <div class="card">
+    <div class="section-header">
+      <div class="section-num">2</div>
+      <div>
+        <div class="section-title">Choose Technique</div>
+        <div class="section-subtitle">Select one or combine both for maximum compression</div>
+      </div>
+    </div>
+
+    <div class="techniques-grid">
+      <div class="technique-card pruning" onclick="selectTechnique('pruning')">
+        <div class="technique-badge">
+          <svg width="10" height="10" viewBox="0 0 10 10"><path d="M2 5L4.5 7.5L8 2.5" stroke="#050810" stroke-width="1.5" stroke-linecap="round" fill="none"/></svg>
+        </div>
+        <span class="technique-icon">✂️</span>
+        <div class="technique-name" style="color:#ff5c5c">Pruning</div>
+        <div class="technique-desc">Remove redundant weights and neurons. Reduces model size while preserving accuracy.</div>
+      </div>
+
+      <div class="technique-card quant" onclick="selectTechnique('quant')">
+        <div class="technique-badge">
+          <svg width="10" height="10" viewBox="0 0 10 10"><path d="M2 5L4.5 7.5L8 2.5" stroke="#050810" stroke-width="1.5" stroke-linecap="round" fill="none"/></svg>
+        </div>
+        <span class="technique-icon">🔢</span>
+        <div class="technique-name" style="color:#00f5d4">Quantization</div>
+        <div class="technique-desc">Reduce numerical precision from 32-bit floats to INT8 or FP16 for faster ops.</div>
+      </div>
+
+      <div class="technique-card both" onclick="selectTechnique('both')">
+        <div class="technique-badge">
+          <svg width="10" height="10" viewBox="0 0 10 10"><path d="M2 5L4.5 7.5L8 2.5" stroke="#050810" stroke-width="1.5" stroke-linecap="round" fill="none"/></svg>
+        </div>
+        <span class="technique-icon">⚡</span>
+        <div class="technique-name" style="color:#3d8bff">Both</div>
+        <div class="technique-desc">Maximum compression. Apply pruning first, then quantize for extreme efficiency.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 3: CONFIG -->
+  <div class="card" id="configCard" style="display:none">
+    <div class="section-header">
+      <div class="section-num">3</div>
+      <div>
+        <div class="section-title">Configure Parameters</div>
+        <div class="section-subtitle">Fine-tune your compression settings</div>
+      </div>
+    </div>
+
+    <!-- PRUNING CONFIG -->
+    <div class="config-section" id="pruningConfig">
+      <div class="slider-wrapper">
+        <div class="slider-header">
+          <div>
+            <div class="slider-title">Pruning Intensity</div>
+            <div style="font-size:11px;color:var(--text-muted);margin-top:4px">% of weights to prune</div>
+          </div>
+          <div class="slider-value" id="sliderDisplay">30<span>%</span></div>
+        </div>
+
+        <div class="slider-track" id="sliderTrack">
+          <div class="slider-fill" id="sliderFill" style="width:30%"></div>
+          <div class="slider-thumb" id="sliderThumb" style="left:30%"></div>
+          <input type="range" id="pruningSlider" min="1" max="99" value="30" oninput="updateSlider(this.value)">
+        </div>
+
+        <div class="slider-labels">
+          <span>1% — Minimal</span>
+          <span>50% — Balanced</span>
+          <span>99% — Extreme</span>
+        </div>
+
+        <div class="pruning-impact">
+          <div class="impact-box">
+            <div class="impact-val" id="sizeReduction" style="color:var(--accent3)">−30%</div>
+            <div class="impact-label">Size Reduced</div>
+          </div>
+          <div class="impact-box">
+            <div class="impact-val" id="speedGain" style="color:var(--accent2)">1.4×</div>
+            <div class="impact-label">Speed Gain</div>
+          </div>
+          <div class="impact-box">
+            <div class="impact-val" id="accLoss" style="color:var(--text-dim)">~1%</div>
+            <div class="impact-label">Accuracy Loss</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="alert warn" id="pruningWarn">
+        ⚠️ Pruning above 70% may significantly degrade model performance. Consider fine-tuning afterward.
+      </div>
+    </div>
+
+    <!-- QUANT CONFIG -->
+    <div class="config-section" id="quantConfig">
+      <div id="quantDivider"></div>
+
+      <div style="margin-bottom:16px;">
+        <div style="font-family:var(--font-head);font-size:15px;font-weight:600;margin-bottom:4px;">Quantization Precision</div>
+        <div style="font-size:12px;color:var(--text-muted);">Select the target bit-width for your model's weights</div>
+      </div>
+
+      <div class="quant-grid">
+        <div class="quant-option" id="q8opt" onclick="selectQuant(8)">
+          <div class="quant-bits">8</div>
+          <div class="quant-bit-label">BIT INT8</div>
+          <ul class="quant-pros">
+            <li>4× smaller than FP32</li>
+            <li>Fast CPU inference</li>
+            <li>~1% accuracy loss</li>
+          </ul>
+        </div>
+        <div class="quant-option" id="q16opt" onclick="selectQuant(16)">
+          <div class="quant-bits">16</div>
+          <div class="quant-bit-label">BIT FP16</div>
+          <ul class="quant-pros">
+            <li>2× smaller than FP32</li>
+            <li>GPU optimized</li>
+            <li>Minimal quality loss</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 4: RUN -->
+  <div class="run-section" id="runSection" style="display:none; margin-bottom:24px;">
+    <button class="run-btn" onclick="runOptimization()">
+      <span class="btn-shimmer"></span>
+      <span id="runBtnText">⚡ Optimize Model</span>
+    </button>
+  </div>
+
+  <!-- OUTPUT -->
+  <div class="card output-section" id="outputSection">
+    <div class="section-header">
+      <div class="section-num" style="background:rgba(0,245,212,0.1);border-color:var(--accent2);color:var(--accent2)">✓</div>
+      <div>
+        <div class="section-title">Optimization Log</div>
+        <div class="section-subtitle">Real-time processing pipeline</div>
+      </div>
+    </div>
+
+    <div class="progress-bar">
+      <div class="progress-fill" id="progressFill"></div>
+    </div>
+
+    <div class="log-window" id="logWindow"></div>
+
+    <div class="results-grid" id="resultsGrid" style="display:none">
+      <div class="result-card" id="rc1">
+        <div class="result-val" id="rv1">—</div>
+        <div class="result-label">Original Size</div>
+      </div>
+      <div class="result-card" id="rc2">
+        <div class="result-val" id="rv2">—</div>
+        <div class="result-label">Compressed Size</div>
+      </div>
+      <div class="result-card" id="rc3">
+        <div class="result-val" id="rv3">—</div>
+        <div class="result-label">Size Reduction</div>
+      </div>
+      <div class="result-card" id="rc4">
+        <div class="result-val" id="rv4">—</div>
+        <div class="result-label">Speed Gain</div>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    Built with NeuralForge Engine &nbsp;·&nbsp; Supports <a href="https://huggingface.co" target="_blank">Hugging Face</a> models &nbsp;·&nbsp; All processing is simulated for demo purposes
+  </footer>
+
+</div>
+
+<script src="static/app.js"></script>
+</body>
+</html>
