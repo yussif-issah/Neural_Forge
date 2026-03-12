@@ -7,7 +7,7 @@ A machine learning model compression tool that leverages AI agents to intelligen
 This project enables automatic model compression for any model architecture by using an intelligent AI agent that analyzes model components and determines what can be safely pruned. Supported compression techniques include:
 
 - **Neuron Pruning**: Automatically identifies less important neurons in MLP layers using importance scoring
-- **Architecture-Agnostic**: Works with any transformer-based model available on Hugging Face Hub
+- **Architecture-Agnostic**: Works with any model available on Hugging Face Hub
 - **AI-Driven**: Uses CrewAI agents to make intelligent decisions about which components to compress
 
 ## Key Features
@@ -15,7 +15,7 @@ This project enables automatic model compression for any model architecture by u
 - 🤖 **AI-Powered Analysis**: Uses AI agents to reason about model structure and importance
 - 🎯 **Flexible Pruning**: Supports variable pruning percentages and multiple compression strategies
 - 🌐 **Web Interface**: User-friendly web dashboard for model selection and compression configuration
-- 📦 **Model-Agnostic**: Works with any transformer architecture (Llama, Gemma, Mistral, etc.)
+- 📦 **Model-Agnostic**: Works with any architecture (Llama, Gemma, Mistral, etc.)
 - ⚡ **Real-time Metrics**: Monitor parameter counts and model size before and after compression
 
 ## Project Structure
@@ -42,5 +42,3 @@ This project is in early development stage. The foundation for model analysis an
 - Support for additional model architectures
 
 ---
-
-For questions or contributions, feel free to reach out or open an issue.
