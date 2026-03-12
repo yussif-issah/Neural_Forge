@@ -1,17 +1,11 @@
-research_task:
+identify_mlp_layers_task:
   description: >
-    Conduct a thorough research about {topic}
-    Make sure you find any interesting and relevant information given
-    the current year is {current_year}.
+    This task involves analyzing a given model architecture to identify all the MLP (Multi-Layer Perceptron) layers present in it. 
+    For each identified MLP layer, provide insights on its structure, such as the number of layers.
+     The goal is to help optimize the model's performance and efficiency by understanding the role of MLP layers in the overall architecture.
   expected_output: >
-    A list with 10 bullet points of the most relevant information about {topic}
-  agent: researcher
+    A list of all the MLP layers in the given model architecture. 
+    {'mlp_layers': [{'layer_name': 'layer1', 'num_layers': 3}, {'layer_name': 'layer2', 'num_layers': 2}]}
+  agent: model_architect_expert
 
-reporting_task:
-  description: >
-    Review the context you got and expand each topic into a full section for a report.
-    Make sure the report is detailed and contains any and all relevant information.
-  expected_output: >
-    A fully fledged report with the main topics, each with a full section of information.
-    Formatted as markdown without '```'
-  agent: reporting_analyst
+

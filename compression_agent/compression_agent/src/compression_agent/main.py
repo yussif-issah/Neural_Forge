@@ -47,7 +47,7 @@ def replay():
     Replay the crew execution from a specific task.
     """
     try:
-        CompressionAgent().crew().replay(task_id=sys.argv[1])
+        CompressionAgent().crew().replay(task_id=sys.argv[1])   
 
     except Exception as e:
         raise Exception(f"An error occurred while replaying the crew: {e}")
