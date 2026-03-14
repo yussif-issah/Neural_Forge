@@ -12,7 +12,7 @@ class CompressionAgent():
     agents: list[BaseAgent]
     tasks: list[Task]
     llm : LLM = LLM(
-            model = "ollama/deepseek-r1:7b",
+            model = "ollama/deepseek-r1:14b",
             base_url = "http://127.0.0.1:11434",
         )
     # Learn more about YAML configuration files here:

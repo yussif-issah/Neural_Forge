@@ -1,11 +1,88 @@
 identify_mlp_layers_task:
   description: >
     This task involves analyzing a given model architecture to identify all the MLP (Multi-Layer Perceptron) layers present in it. 
-    For each identified MLP layer, provide insights on its structure, such as the number of layers.
-     The goal is to help optimize the model's performance and efficiency by understanding the role of MLP layers in the overall architecture.
+    For a given architecture, identify the path to the mlp layers, the number of mlp layers, the 
+    name of the mlp layer, and the names of the linear layers within each mlp layer. This information will be crucial for optimizing the model's performance and efficiency.
+    Your output should be a structured json. 
+    The layer name that contains MLP layers and the number of MLP layers in the given model architecture.
+    for each MLP layer, give us the name of the linear layers. For example, when given a  model architecture like: 
+    LlavaNextForConditionalGeneration(
+  (model): LlavaNextModel(
+    (vision_tower):CLIPVisionModel(
+      (vision_model):CLIPVisionTransformer(
+        (embeddings):CLIPVisionEmbeddings(
+          (patch_embedding):Conv2d(3, 1024, kernel_size=(14, 14), stride=(14, 14), bias=False)
+          (position_embedding):Embedding(577, 1024)
+        )
+        (pre_layrnorm):LayerNorm((1024,), eps=1e-05, elementwise_affine=True)
+        (encoder):CLIPEncoder(
+          (layers):ModuleList(
+            (0-23):24 x CLIPEncoderLayer(
+              (self_attn):CLIPAttention(
+                (k_proj):Linear(in_features=1024, out_features=1024, bias=True)
+                (v_proj):Linear(in_features=1024, out_features=1024, bias=True)
+                (q_proj):Linear(in_features=1024, out_features=1024, bias=True)
+                (out_proj):Linear(in_features=1024, out_features=1024, bias=True)
+              )
+              (layer_norm1):LayerNorm((1024,), eps=1e-05, elementwise_affine=True)
+              (mlp):CLIPMLP(
+                (activation_fn):QuickGELUActivation()
+                (fc1):Linear(in_features=1024, out_features=4096, bias=True)
+                (fc2):Linear(in_features=4096, out_features=1024, bias=True)
+              )
+              (layer_norm2):LayerNorm((1024,), eps=1e-05, elementwise_affine=True)
+            )
+          )
+        )
+        (post_layernorm):LayerNorm((1024,), eps=1e-05, elementwise_affine=True)
+      )
+    )
+    (multi_modal_projector):LlavaNextMultiModalProjector(
+      (linear_1):Linear(in_features=1024, out_features=4096, bias=True)
+      (act):GELUActivation()
+      (linear_2):Linear(in_features=4096, out_features=4096, bias=True)
+    )
+    (language_model):MistralModel(
+      (embed_tokens):Embedding(32064, 4096)
+      (layers):ModuleList(
+        (0-31):32 x MistralDecoderLayer(
+          (self_attn):MistralAttention(
+            (q_proj):Line  ar(in_features=4096, out_features=4096, bias=False)
+            (k_proj):Linear(in_features=4096, out_features=1024, bias=False)
+            (v_proj):Linear(in_features=4096, out_features=1024, bias=False)
+            (o_proj):Linear(in_features=4096, out_features=4096, bias=False)
+          )
+          (mlp):MistralMLP(
+            (gate_proj):Linear(in_features=4096, out_features=14336, bias=False)
+            (up_proj):Linear(in_features=4096, out_features=14336, bias=False)
+            (down_proj):Linear(in_features=14336, out_features=4096, bias=False)
+            (act_fn):SiLUActivation()
+          )
+          (input_layernorm):MistralRMSNorm((4096,), eps=1e-05)
+          (post_attention_layernorm):MistralRMSNorm((4096,), eps=1e-05)
+        )
+      )
+      (norm):MistralRMSNorm((4096,), eps=1e-05)
+      (rotary_emb):MistralRotaryEmbedding()
+    ))(lm_head):Linear(in_features=4096, out_features=32064, bias=False)
+     "path_to_mlp":[model, language_model, layers], shows the sequential order of how to access the mlp layers in the model architecture.
+     "number_of_layers":32, indicates that there are 32 mlp layers in the language model.
+     "mlp_layer_name":"mlp", specifies that the name of the mlp layer within each decoder layer is "mlp".
+     "linear_layers_in_mlp":["gate_proj", "up_proj", "down_proj"], lists the names of the linear layers that are part of each mlp layer, which are crucial for understanding the structure and functionality of the mlp layers in the model architecture.
+     The output must follow the exact format as shown in the example below, 
+      {
+        "path_to_mlp":[model, language_model, layers],
+        "number_of_layers":32,
+        "mlp_layer_name":"mlp",
+        "linear_layers_in_mlp":["gate_proj", "up_proj", "down_proj"]
+      }
+    
   expected_output: >
-    A list of all the MLP layers in the given model architecture. 
-    {'mlp_layers': [{'layer_name': 'layer1', 'num_layers': 3}, {'layer_name': 'layer2', 'num_layers': 2}]}
+      {
+        "path_to_mlp":[list of layers to access mlp layers in the model architecture],
+        "number_of_layers":number of mlp layers in the model architecture,
+        "mlp_layer_name":"the name of the mlp layer in the model architecture",
+        "linear_layers_in_mlp":[list of the name of linear layers within the mlp layer in the model architecture]
+      }
   agent: model_architect_expert
-
 

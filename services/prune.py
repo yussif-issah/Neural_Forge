@@ -15,10 +15,12 @@ from services.compressionUtils import CompressionUtils
 tokenizer = AutoTokenizer.from_pretrained("meta-llama/Llama-3.2-1B")
 model  = AutoModelForCausalLM.from_pretrained("meta-llama/Llama-3.2-1B")
 
+print(model)
+
 compressionUtils = CompressionUtils()
 
 new_model =compressionUtils.pruneModel(model, prune_percentage=0.6)
-count_model_size_gb(model)
+'''count_model_size_gb(model)
 count_model_size_gb(new_model)
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -30,4 +32,4 @@ quantized_model = torch.ao.quantization.quantize(
     dtype=torch.qint8
 )
 
-print(count_model_size_gb(quantized_model))
+print(count_model_size_gb(quantized_model))'''
