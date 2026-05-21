@@ -1,13 +1,13 @@
 # Model Compression Agent
 
-A machine learning model compression tool that leverages AI agents to intelligently identify and prune redundant components from neural networks, reducing model size and latency while maintaining performance.
+A machine learning model compression tool that leverages AI agents to intelligently analyze model structure and pass information needed by a compression engine to compress the model.
 
 ## Overview
 
-This project enables automatic model compression for any model architecture by using an intelligent AI agent that analyzes model components and determines what can be safely pruned. Supported compression techniques include:
+This project enables automatic model compression for causal LLM model architecture by using an intelligent AI agent that analyzes model components and determines what can be safely pruned. Supported compression techniques include:
 
 - **Neuron Pruning**: Automatically identifies less important neurons in MLP layers using importance scoring
-- **Architecture-Agnostic**: Works with any model available on Hugging Face Hub
+- **Architecture-Agnostic**: Works with any caulsal LLM model available on Hugging Face Hub
 - **AI-Driven**: Uses CrewAI agents to make intelligent decisions about which components to compress
 
 ## Key Features
